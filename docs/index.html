@@ -28,7 +28,9 @@
         <textarea id="inputtext" class="inputtext" rows="6">
 # Title
 
-Inline math: $a=1$</textarea>
+Inline math: $a=1$
+
+Inline display math: $$b=2$$</textarea>
         <div id="renderer" class="rendered"></div>
       </div>
     </div>
@@ -46,7 +48,9 @@ Inline math: $a=1$</textarea>
           double_inline: true,
           allow_labels: true,
           renderer: katex.renderToString, 
-          optionsInline: { throwOnError: false, displayMode: false }};
+          optionsInline: { throwOnError: false, displayMode: false },
+          optionsBlock: { throwOnError: false, displayMode: true }
+        };
         const md = window.markdownit().use(window.markdownitDollarmath, options);
         renderer.innerHTML = md.render(e.target.value)
       }

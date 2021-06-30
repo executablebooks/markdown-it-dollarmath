@@ -25,8 +25,13 @@ import MarkdownIt from "markdown-it"
 import dollarmathPlugin from "markdown-it-dollarmath"
 
 const mdit = MarkdownIt().use(dollarmathPlugin, {
+      allow_space: true,
+      allow_digits: true,
+      double_inline: true,
+      allow_labels: true,
       renderer: renderToString,
-      options: { throwOnError: false, displayMode: true }
+      optionsInline: { throwOnError: false, displayMode: false },
+      optionsBlock: { throwOnError: false, displayMode: true }
 })
 const text = mdit.render("$a = 1$")
 ```
@@ -46,7 +51,11 @@ In the browser:
     <body>
         <div id="demo"></div>
         <script>
-            const options = { renderer: katex.renderToString, options: { throwOnError: false, displayMode: true }};
+            const options = { 
+                renderer: katex.renderToString, 
+                optionsInline: { throwOnError: false, displayMode: false },
+                optionsBlock: { throwOnError: false, displayMode: true }
+            };
             const text = window.markdownit().use(window.markdownitDollarmath, options).render("$a = 1$");
             document.getElementById("demo").innerHTML = text
         </script>

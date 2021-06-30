@@ -36,14 +36,18 @@ export default function dollarmath_plugin(md: MarkdownIt, options?: IOptions): v
   md.inline.ruler.before("escape", "math_inline", math_inline_dollar(fullOptions))
   // md.block.ruler.before("fence", "math_block", math_block_dollar(fullOptions))
 
-  const renderer = options?.renderer
+  const renderer = fullOptions?.renderer
 
   if (renderer) {
     md.renderer.rules["math_inline"] = (tokens, idx) => {
       const content = tokens[idx].content
+      const renderOptions =
+        tokens[idx].markup === "$$"
+          ? fullOptions?.optionsBlock
+          : fullOptions?.optionsInline
       let res: string
       try {
-        res = renderer(content, options?.optionsInline)
+        res = renderer(content, renderOptions)
       } catch (err) {
         res = md.utils.escapeHtml(`${content}:${err.message}`)
       }

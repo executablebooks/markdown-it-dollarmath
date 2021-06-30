@@ -38,7 +38,8 @@ describe("Parses basic", () => {
       double_inline: true,
       allow_labels: true,
       renderer: renderToString,
-      optionsInline: { throwOnError: false, displayMode: true }
+      optionsInline: { throwOnError: false, displayMode: false },
+      optionsBlock: { throwOnError: false, displayMode: true }
     })
     let rendered = mdit.render(text)
     // remove styles
