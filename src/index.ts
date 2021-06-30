@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type MarkdownIt from "markdown-it/lib"
 // import type StateBlock from "markdown-it/lib/rules_block/state_block"
 import type StateInline from "markdown-it/lib/rules_inline/state_inline"
@@ -11,6 +12,12 @@ export interface IOptions {
   allow_digits?: boolean
   // Search for double-dollar math within inline contexts
   double_inline?: boolean
+  // The render function for math content
+  renderer?: (content: string, options?: { [key: string]: any }) => string
+  // options to parse to the render function, for inline math
+  optionsInline?: { [key: string]: any }
+  // options to parse to the render function, for block math
+  optionsBlock?: { [key: string]: any }
 }
 
 const OptionDefaults: IOptions = {
@@ -29,11 +36,26 @@ export default function dollarmath_plugin(md: MarkdownIt, options?: IOptions): v
   md.inline.ruler.before("escape", "math_inline", math_inline_dollar(fullOptions))
   // md.block.ruler.before("fence", "math_block", math_block_dollar(fullOptions))
 
-  // basic renderer for testing
-  md.renderer.rules["math_inline"] = (tokens, idx) => {
-    const content = tokens[idx].content
-    const tag = tokens[idx].markup === "$$" ? "eqn" : "eq"
-    return `<${tag}>${content}</${tag}>`
+  const renderer = options?.renderer
+
+  if (renderer) {
+    md.renderer.rules["math_inline"] = (tokens, idx) => {
+      const content = tokens[idx].content
+      let res: string
+      try {
+        res = renderer(content, options?.optionsInline)
+      } catch (err) {
+        res = md.utils.escapeHtml(`${content}:${err.message}`)
+      }
+      return res
+    }
+  } else {
+    // basic renderer for testing
+    md.renderer.rules["math_inline"] = (tokens, idx) => {
+      const content = tokens[idx].content
+      const tag = tokens[idx].markup === "$$" ? "eqn" : "eq"
+      return `<${tag}>${content}</${tag}>`
+    }
   }
 }
 

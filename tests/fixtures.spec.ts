@@ -1,5 +1,6 @@
 /* eslint-disable jest/valid-title */
 import fs from "fs"
+import { renderToString } from "katex"
 import MarkdownIt from "markdown-it"
 import dollarmathPlugin from "../src"
 
@@ -20,13 +21,29 @@ function readFixtures(name: string): string[][] {
 
 describe("Parses basic", () => {
   readFixtures("basic").forEach(([name, text, expected]) => {
-    const mdit = MarkdownIt("commonmark", { xhtmlOut: false }).use(dollarmathPlugin, {
+    const mdit = MarkdownIt("commonmark").use(dollarmathPlugin, {
       allow_space: false,
       allow_digits: false,
       double_inline: true,
       allow_labels: true
     })
     const rendered = mdit.render(text)
+    it(name, () => expect(rendered.trim()).toEqual(expected.trim()))
+  })
+
+  readFixtures("katex").forEach(([name, text, expected]) => {
+    const mdit = MarkdownIt("commonmark").use(dollarmathPlugin, {
+      allow_space: false,
+      allow_digits: false,
+      double_inline: true,
+      allow_labels: true,
+      renderer: renderToString,
+      optionsInline: { throwOnError: false, displayMode: true }
+    })
+    let rendered = mdit.render(text)
+    // remove styles
+    rendered = rendered.replace(/style="[^"]+"/g, 'style=""')
+    // console.log(rendered)
     it(name, () => expect(rendered.trim()).toEqual(expected.trim()))
   })
 })

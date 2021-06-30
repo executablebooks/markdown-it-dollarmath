@@ -5,27 +5,30 @@
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
     <title>Plugin Demonstration</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
     <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
     <script src="https://cdn.jsdelivr.net/npm/markdown-it@12/dist/markdown-it.min.js"></script>
-    <script src="https://unpkg.com/markdown-it-plugin-template"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.js"></script>
+    <!-- <script src="https://unpkg.com/markdown-it-dollarmath"></script> -->
+    <script src="../dist/umd/index.js"></script>
   </head>
   <body>
     <div class="main">
       <div class="header">
-        <h1>markdown-it-plugin-template</h1>
+        <h1>markdown-it-dollarmath</h1>
       </div>
       <div class="content">
         <p>
           This is a minimalist demonstration of the
-          <a href="https://github.com/executablebooks/markdown-it-plugin-template">markdown-it-plugin-template</a> plugin.
+          <a href="https://github.com/executablebooks/markdown-it-dollarmath">markdown-it-dollarmath</a> plugin.
         </p>
         <p>
           Simply write in the text box below, then click away, and the text will be rendered.
         </p>
-        <textarea id="inputtext" class="inputtext">
+        <textarea id="inputtext" class="inputtext" rows="6">
 # Title
 
-Hallo world, paragraph in **blue**!</textarea>
+Inline math: $a=1$</textarea>
         <div id="renderer" class="rendered"></div>
       </div>
     </div>
@@ -37,8 +40,15 @@ Hallo world, paragraph in **blue**!</textarea>
       // setup change handler
       inputText.onchange = handleChange;
       function handleChange(e) {
-        const text = window.markdownit().use(window.markdownitExample).render(e.target.value);
-        renderer.innerHTML = text
+        const options = { 
+          allow_space: true,
+          allow_digits: true,
+          double_inline: true,
+          allow_labels: true,
+          renderer: katex.renderToString, 
+          optionsInline: { throwOnError: false, displayMode: false }};
+        const md = window.markdownit().use(window.markdownitDollarmath, options);
+        renderer.innerHTML = md.render(e.target.value)
       }
 
       // trigger change handler for first render
