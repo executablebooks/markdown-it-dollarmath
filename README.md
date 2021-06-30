@@ -1,21 +1,34 @@
-# Markdown-It Plugin Template
+# markdown-it-dollarmath
 
 [![ci-badge]][ci-link]
 [![npm-badge]][npm-link]
 
-A template for creating a [markdown-it](https://github.com/markdown-it/markdown-it) plugin.
+A [markdown-it](https://github.com/markdown-it/markdown-it) plugin for $-delimited math environments.
 
-See <https://executablebooks.github.io/markdown-it-plugin-template/> for a demonstration!
+See <https://executablebooks.github.io/markdown-it-dollarmath/> for a demonstration!
+
+Note there is a similar plugin [markdown-it-texmath](https://github.com/goessner/markdown-it-texmath).
+`markdown-it-dollarmath` package differs in that it is optimised for dollar math:
+it is more performant, handles backslash ``\\`` escaping properly, and allows for more configuration.
 
 ## Usage
+
+You should "bring your own" math render, provided as an option to the plugin.
+This function should take the string plus (optional) options, and return a string.
+For example, below the [KaTeX](https://github.com/Khan/KaTeX) render is used.
 
 As a Node module:
 
 ```javascript
+import { renderToString } from "katex"
 import MarkdownIt from "markdown-it"
-import examplePlugin from "markdown-it-plugin-template"
+import dollarmathPlugin from "markdown-it-dollarmath"
 
-const text = MarkdownIt().use(examplePlugin).render("*a*")
+const mdit = MarkdownIt().use(dollarmathPlugin, {
+      renderer: renderToString,
+      options: { throwOnError: false, displayMode: true }
+})
+const text = mdit.render("$a = 1$")
 ```
 
 In the browser:
@@ -25,13 +38,16 @@ In the browser:
 <html>
     <head>
         <title>Example Page</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
         <script src="https://cdn.jsdelivr.net/npm/markdown-it@12/dist/markdown-it.min.js"></script>
-        <script src="https://unpkg.com/markdown-it-plugin-template"></script>
+        <script src="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.js"></script>
+        <script src="https://unpkg.com/markdown-it-dollarmath"></script>
     </head>
     <body>
         <div id="demo"></div>
         <script>
-            const text = window.markdownit().use(window.markdownitExample).render("*a*");
+            const options = { renderer: katex.renderToString, options: { throwOnError: false, displayMode: true }};
+            const text = window.markdownit().use(window.markdownitDollarmath, options).render("$a = 1$");
             document.getElementById("demo").innerHTML = text
         </script>
     </body>
@@ -75,36 +91,10 @@ Finally, you can update the version of your package, e.g.: `npm version patch -m
 Finally, you can adapt the HTML document in `docs/`, to load both markdown-it and the plugin (from [unpkg]), then render text from an input area.
 This can be deployed by [GitHub Pages].
 
-## Design choices
-
-### Why is markdown-it only in devDependencies?
-
-From the [markdown-it development recommendations](https://github.com/markdown-it/markdown-it/blob/master/docs/development.md):
-
-> Plugins should not require the `markdown-it` package as a dependency in `package.json`.
-
-Note, for typing, we import this package with `import type`, to ensure the imports are not present in the compiled JavaScript.
-
-### Why Jest?
-
-There are a number of JavaScript unit testing frameworks (see [this comparison](https://raygun.com/blog/javascript-unit-testing-frameworks/), but [jest] was chosen because of it is easy to setup/use, flexible, and well used in large projects.
-
-### Why Rollup?
-
-The three main bundlers are; Webpack, Rollup and Parcel, with the functionality gap between all of these bundlers narrowing over the years.
-Essentially, Rollup provides a middle ground between features and complexity, and is good for bundling libraries (it is what `markdown-it` itself [uses](https://github.com/markdown-it/markdown-it/blob/064d602c6890715277978af810a903ab014efc73/support/rollup.config.js)).
-
-See for example:
-
-- <https://medium.com/@PepsRyuu/why-i-use-rollup-and-not-webpack-e3ab163f4fd3>
-- <https://medium.com/js-imaginea/comparing-bundlers-webpack-rollup-parcel-f8f5dc609cfd>
-- <https://betterprogramming.pub/the-battle-of-bundlers-6333a4e3eda9>
-
-
-[ci-badge]: https://github.com/executablebooks/markdown-it-plugin-template/workflows/CI/badge.svg
+[ci-badge]: https://github.com/executablebooks/markdown-it-dollarmath/workflows/CI/badge.svg
 [ci-link]: https://github.com/executablebooks/markdown-it--plugin-template/actions
-[npm-badge]: https://img.shields.io/npm/v/markdown-it-plugin-template.svg
-[npm-link]: https://www.npmjs.com/package/markdown-it-plugin-template
+[npm-badge]: https://img.shields.io/npm/v/markdown-it-dollarmath.svg
+[npm-link]: https://www.npmjs.com/package/markdown-it-dollarmath
 
 [GitHub Actions]: https://docs.github.com/en/actions
 [GitHub Pages]: https://docs.github.com/en/pages

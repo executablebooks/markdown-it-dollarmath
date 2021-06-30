@@ -1,7 +1,7 @@
 /* eslint-disable jest/valid-title */
 import fs from "fs"
 import MarkdownIt from "markdown-it"
-import example_plugin from "../src"
+import dollarmathPlugin from "../src"
 
 /** Read a "fixtures" file, containing a set of tests:
  *
@@ -20,8 +20,13 @@ function readFixtures(name: string): string[][] {
 
 describe("Parses basic", () => {
   readFixtures("basic").forEach(([name, text, expected]) => {
-    const mdit = MarkdownIt().use(example_plugin)
+    const mdit = MarkdownIt("commonmark", { xhtmlOut: false }).use(dollarmathPlugin, {
+      allow_space: false,
+      allow_digits: false,
+      double_inline: true,
+      allow_labels: true
+    })
     const rendered = mdit.render(text)
-    it(name, () => expect(rendered).toEqual(`${expected}\n`))
+    it(name, () => expect(rendered.trim()).toEqual(expected.trim()))
   })
 })
