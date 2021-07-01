@@ -32,16 +32,27 @@
           Simply write in the text box below, then click away, and the text will be
           rendered.
         </p>
-        <textarea id="inputtext" class="inputtext" rows="6">
-# Title
-
+        <textarea id="inputtext" class="inputtext" rows="15">
 Inline math: $a=1$
 
-Inline display math: $$b=2$$</textarea
+Inline display math: $$b=2$$
+
+Block math:
+
+$$
+c=3
+$$
+
+Block math with label:
+
+$$
+d=4
+$$ (label)</textarea
         >
         <div id="renderer" class="rendered"></div>
       </div>
     </div>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
     <script>
       // get elements
       var inputText = document.getElementById("inputtext")

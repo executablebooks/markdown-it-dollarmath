@@ -28,6 +28,7 @@ describe("Parses basic", () => {
       allow_labels: true
     })
     const rendered = mdit.render(text)
+    // console.log(rendered)
     it(name, () => expect(rendered.trim()).toEqual(expected.trim()))
   })
 

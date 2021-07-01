@@ -13,6 +13,14 @@ it is more performant, handles backslash ``\\`` escaping properly, and allows fo
 
 ## Usage
 
+Options:
+
+- `allow_space`: Parse inline math when there is space after/before the opening/closing `$`, e.g. `$ a $`
+- `allow_digits`: Parse inline math when there is a digit before/after the opening/closing `$`, e.g. `1$` or `$2`
+- `double_inline`: Search for double-dollar math within inline contexts
+- `allow_labels`: Capture math blocks with label suffix, e.g. `$$a=1$$ (eq1)`
+- `labelNormalizer`: Function to normalize the label, by default replaces whitespace with `-` (to align with [HTML5 ids](https://html.spec.whatwg.org/multipage/dom.html#global-attributes:the-id-attribute-2))
+
 You should "bring your own" math render, provided as an option to the plugin.
 This function should take the string plus (optional) options, and return a string.
 For example, below the [KaTeX](https://github.com/Khan/KaTeX) render is used.
@@ -25,13 +33,16 @@ import MarkdownIt from "markdown-it"
 import dollarmathPlugin from "markdown-it-dollarmath"
 
 const mdit = MarkdownIt().use(dollarmathPlugin, {
-      allow_space: true,
-      allow_digits: true,
-      double_inline: true,
-      allow_labels: true,
-      renderer: renderToString,
-      optionsInline: { throwOnError: false, displayMode: false },
-      optionsBlock: { throwOnError: false, displayMode: true }
+    allow_space: true,
+    allow_digits: true,
+    double_inline: true,
+    allow_labels: true,
+    labelNormalizer: (label: string) => {
+        return label.replace(/[\s]+/g, "-")
+    }
+    renderer: renderToString,
+    optionsInline: { throwOnError: false, displayMode: false },
+    optionsBlock: { throwOnError: false, displayMode: true }
 })
 const text = mdit.render("$a = 1$")
 ```
