@@ -49,6 +49,16 @@ $$
 d=4
 $$ (label)</textarea
         >
+        <div class="options">
+          <input type="checkbox" id="allow_space" checked>
+          <label for="allow_space">allow_space</label>
+          <input type="checkbox" id="allow_digits" checked>
+          <label for="allow_digits">allow_digits</label>
+          <input type="checkbox" id="double_inline" checked>
+          <label for="double_inline">double_inline</label>
+          <input type="checkbox" id="allow_labels" checked>
+          <label for="allow_labels">allow_labels</label>
+        </div>
         <div id="renderer" class="rendered"></div>
       </div>
     </div>
@@ -58,22 +68,30 @@ $$ (label)</textarea
       var inputText = document.getElementById("inputtext")
       var renderer = document.getElementById("renderer")
 
+      const allow_space = document.getElementById("allow_space")
+      const allow_digits = document.getElementById("allow_digits")
+      const double_inline = document.getElementById("double_inline")
+      const allow_labels = document.getElementById("allow_labels")
+
       // setup change handler
       inputText.onchange = handleChange
+      allow_space.onchange = handleChange
+      allow_digits.onchange = handleChange
+      double_inline.onchange = handleChange
+      allow_labels.onchange = handleChange
       function handleChange(e) {
         const options = {
-          allow_space: true,
-          allow_digits: true,
-          double_inline: true,
-          allow_labels: true,
+          allow_space: allow_space.checked,
+          allow_digits: allow_digits.checked,
+          double_inline: double_inline.checked,
+          allow_labels: allow_labels.checked,
           renderer: katex.renderToString,
           optionsInline: { throwOnError: false, displayMode: false },
           optionsBlock: { throwOnError: false, displayMode: true }
         }
         const md = window.markdownit().use(window.markdownitDollarmath, options)
-        renderer.innerHTML = md.render(e.target.value)
+        renderer.innerHTML = md.render(inputText.value)
       }
-
       // trigger change handler for first render
       const event = new Event("change")
       inputText.dispatchEvent(event)
