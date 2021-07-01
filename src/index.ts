@@ -4,21 +4,21 @@ import type StateBlock from "markdown-it/lib/rules_block/state_block"
 import type StateInline from "markdown-it/lib/rules_inline/state_inline"
 
 export interface IOptions {
-  // Parse inline math when there is space after/before the opening/closing `$`, e.g. `$ a $`
+  /** Parse inline math when there is space after/before the opening/closing `$`, e.g. `$ a $` */
   allow_space?: boolean
-  // Parse inline math when there is a digit before/after the opening/closing `$`, e.g. `1$` or `$2`
+  /** Parse inline math when there is a digit before/after the opening/closing `$`, e.g. `1$` or `$2` */
   allow_digits?: boolean
-  // Search for double-dollar math within inline contexts
+  /** Search for double-dollar math within inline contexts */
   double_inline?: boolean
-  // Capture math blocks with label suffix, e.g. `$$a=1$$ (eq1)`
+  /** Capture math blocks with label suffix, e.g. `$$a=1$$ (eq1)` */
   allow_labels?: boolean
-  // function to normalize the label, by default replaces whitespace with `-`
+  /** function to normalize the label, by default replaces whitespace with `-` */
   labelNormalizer?: (label: string) => string
-  // The render function for math content
+  /** The render function for math content */
   renderer?: (content: string, options?: { [key: string]: any }) => string
-  // options to parse to the render function, for inline math
+  /** Options to parse to the render function, for inline math */
   optionsInline?: { [key: string]: any }
-  // options to parse to the render function, for block math
+  /** Options to parse to the render function, for block math */
   optionsBlock?: { [key: string]: any }
 }
 
