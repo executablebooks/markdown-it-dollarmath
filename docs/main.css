@@ -26,3 +26,12 @@
   outline: 1px solid lightgrey;
   min-height: 100px;
 }
+
+div.math.block {
+  width: calc(100% - 10px);
+}
+
+.mathlabel {
+  float: right;
+  transform: translate(10px, 0);
+}

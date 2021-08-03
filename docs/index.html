@@ -50,13 +50,13 @@ d=4
 $$ (label)</textarea
         >
         <div class="options">
-          <input type="checkbox" id="allow_space" checked>
+          <input type="checkbox" id="allow_space" checked />
           <label for="allow_space">allow_space</label>
-          <input type="checkbox" id="allow_digits" checked>
+          <input type="checkbox" id="allow_digits" checked />
           <label for="allow_digits">allow_digits</label>
-          <input type="checkbox" id="double_inline" checked>
+          <input type="checkbox" id="double_inline" checked />
           <label for="double_inline">double_inline</label>
-          <input type="checkbox" id="allow_labels" checked>
+          <input type="checkbox" id="allow_labels" checked />
           <label for="allow_labels">allow_labels</label>
         </div>
         <div id="renderer" class="rendered"></div>
@@ -85,11 +85,11 @@ $$ (label)</textarea
           allow_digits: allow_digits.checked,
           double_inline: double_inline.checked,
           allow_labels: allow_labels.checked,
-          renderer: katex.renderToString,
-          optionsInline: { throwOnError: false, displayMode: false },
-          optionsBlock: { throwOnError: false, displayMode: true }
+          renderer(content, { displayMode }) {
+            return katex.renderToString(content, { displayMode, throwOnError: false })
+          }
         }
-        const md = window.markdownit().use(window.markdownitDollarmath, options)
+        const md = markdownit().use(markdownitDollarmath, options)
         renderer.innerHTML = md.render(inputText.value)
       }
       // trigger change handler for first render
