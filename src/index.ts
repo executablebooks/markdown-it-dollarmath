@@ -7,7 +7,6 @@ import type StateInline from "markdown-it/lib/rules_inline/state_inline"
 
 export interface IRenderOptions {
   displayMode: boolean
-  inline: boolean
 }
 
 export interface IOptions {
@@ -53,12 +52,14 @@ export default function dollarmath_plugin(md: MarkdownIt, options?: IOptions): v
   md.block.ruler.before("fence", "math_block", math_block_dollar(fullOptions))
 
   const createRule =
-    (opts: IRenderOptions, hasLabel: boolean): Renderer.RenderRule =>
+    (
+      opts: IRenderOptions & { inline?: boolean; hasLabel?: boolean }
+    ): Renderer.RenderRule =>
     (tokens, idx) => {
       const content = tokens[idx].content.trim()
       let res: string
       try {
-        res = fullOptions.renderer(content, opts)
+        res = fullOptions.renderer(content, { displayMode: opts.displayMode })
       } catch (err) {
         res = md.utils.escapeHtml(`${content}:${err.message}`)
       }
@@ -66,7 +67,7 @@ export default function dollarmath_plugin(md: MarkdownIt, options?: IOptions): v
       const tag = opts.displayMode ? "div" : "span"
       const newline = opts.inline ? "" : "\n"
       const id = tokens[idx].info
-      const label = hasLabel ? `${fullOptions.labelRenderer(id)}` : ""
+      const label = opts.hasLabel ? `${fullOptions.labelRenderer(id)}` : ""
       return (
         [
           `<${tag} ${id ? `id="${id}" ` : ""}class="math ${className}">`,
@@ -79,22 +80,21 @@ export default function dollarmath_plugin(md: MarkdownIt, options?: IOptions): v
       )
     }
 
-  md.renderer.rules["math_inline"] = createRule(
-    { displayMode: false, inline: true },
-    false
-  )
-  md.renderer.rules["math_inline_double"] = createRule(
-    { displayMode: true, inline: true },
-    false
-  )
-  md.renderer.rules["math_block"] = createRule(
-    { displayMode: true, inline: false },
-    false
-  )
-  md.renderer.rules["math_block_label"] = createRule(
-    { displayMode: true, inline: false },
-    true
-  )
+  md.renderer.rules["math_inline"] = createRule({
+    displayMode: false,
+    inline: true
+  })
+  md.renderer.rules["math_inline_double"] = createRule({
+    displayMode: true,
+    inline: true
+  })
+  md.renderer.rules["math_block"] = createRule({
+    displayMode: true
+  })
+  md.renderer.rules["math_block_label"] = createRule({
+    displayMode: true,
+    hasLabel: true
+  })
 }
 
 /** Test if dollar is escaped */
