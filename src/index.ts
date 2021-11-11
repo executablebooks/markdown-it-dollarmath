@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type MarkdownIt from "markdown-it/lib"
 import { escapeHtml } from "markdown-it/lib/common/utils"
-import Renderer from "markdown-it/lib/renderer"
+import type Renderer from "markdown-it/lib/renderer"
 import type StateBlock from "markdown-it/lib/rules_block/state_block"
 import type StateInline from "markdown-it/lib/rules_inline/state_inline"
 
@@ -61,7 +61,7 @@ export default function dollarmath_plugin(md: MarkdownIt, options?: IOptions): v
       try {
         res = fullOptions.renderer(content, { displayMode: opts.displayMode })
       } catch (err) {
-        res = md.utils.escapeHtml(`${content}:${err.message}`)
+        res = md.utils.escapeHtml(`${content}:${(err as Error).message}`)
       }
       const className = opts.inline ? "inline" : "block"
       const tag = opts.displayMode ? "div" : "span"
