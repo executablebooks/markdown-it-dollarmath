@@ -110,10 +110,10 @@ Now you can start to adapt the code in `src/index.ts` for your plugin, starting 
 
 Modify the test in `tests/fixtures.spec.ts`, to load your plugin, then the "fixtures" in `tests/fixtures`, to provide a set of potential Markdown inputs and expected HTML outputs.
 
-On commits/PRs to the `master` branch, the GH actions will trigger, running the linting, unit tests, and build tests.
+On commits/PRs to the `main` branch, the GH actions will trigger, running the linting, unit tests, and build tests.
 Additionally setup and uncomment the [codecov](https://about.codecov.io/) action in `.github/workflows/ci.yml`, to provide automated CI coverage.
 
-Finally, you can update the version of your package, e.g.: `npm version patch -m "🚀 RELEASE: v%s"`, push to GitHub; `git push --follow-tags`, build; `npm run build`, and publish; `npm publish`.
+Finally, you can update the version of your package, e.g.: `npm version patch -m "🚀 RELEASE: v%s"` (patch/minor/major), push to GitHub; `git push --follow-tags`, build; `npm run build`, and publish; `npm publish`.
 
 Finally, you can adapt the HTML document in `docs/`, to load both markdown-it and the plugin (from [unpkg]), then render text from an input area.
 This can be deployed by [GitHub Pages].
