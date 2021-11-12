@@ -15,7 +15,7 @@ export default {
     babel({ babelHelpers: "bundled" }), // transpile ES6/7 code
     nodeResolve(), // resolve third party modules in node_modules
     terser(), // minify generated bundle
-    json()
+    json()  // import json files as modules
   ],
   output: [
     {
