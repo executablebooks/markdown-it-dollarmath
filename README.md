@@ -9,7 +9,7 @@ See <https://executablebooks.github.io/markdown-it-dollarmath/> for a demonstrat
 
 Note there is a similar plugin [markdown-it-texmath](https://github.com/goessner/markdown-it-texmath).
 `markdown-it-dollarmath` package differs in that it is optimised for dollar math:
-it is more performant, handles backslash ``\\`` escaping properly, and allows for more configuration.
+it is more performant, handles backslash `\\` escaping properly, and allows for more configuration.
 
 ## Usage
 
@@ -33,16 +33,19 @@ import MarkdownIt from "markdown-it"
 import dollarmathPlugin from "markdown-it-dollarmath"
 
 const mdit = MarkdownIt().use(dollarmathPlugin, {
-    allow_space: true,
-    allow_digits: true,
-    double_inline: true,
-    allow_labels: true,
-    labelNormalizer: (label: string) => {
-        return label.replace(/[\s]+/g, "-")
-    }
-    renderer: renderToString,
-    optionsInline: { throwOnError: false, displayMode: false },
-    optionsBlock: { throwOnError: false, displayMode: true }
+  allow_space: true,
+  allow_digits: true,
+  double_inline: true,
+  allow_labels: true,
+  labelNormalizer(label) {
+    return label.replace(/[\s]+/g, "-")
+  },
+  renderer(content, { displayMode }) {
+    return renderToString(content, { displayMode, throwOnError: false })
+  },
+  labelRenderer(label) {
+    return `<a href="#${label}" class="mathlabel" title="Permalink to this equation">¶<a>`
+  }
 })
 const text = mdit.render("$a = 1$")
 ```
@@ -52,25 +55,29 @@ In the browser:
 ```html
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Example Page</title>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
-        <script src="https://cdn.jsdelivr.net/npm/markdown-it@12/dist/markdown-it.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.js"></script>
-        <script src="https://unpkg.com/markdown-it-dollarmath"></script>
-    </head>
-    <body>
-        <div id="demo"></div>
-        <script>
-            const options = { 
-                renderer: katex.renderToString, 
-                optionsInline: { throwOnError: false, displayMode: false },
-                optionsBlock: { throwOnError: false, displayMode: true }
-            };
-            const text = window.markdownit().use(window.markdownitDollarmath, options).render("$a = 1$");
-            document.getElementById("demo").innerHTML = text
-        </script>
-    </body>
+  <head>
+    <title>Example Page</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/markdown-it@12/dist/markdown-it.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.js"></script>
+    <script src="https://unpkg.com/markdown-it-dollarmath"></script>
+  </head>
+  <body>
+    <div id="demo"></div>
+    <script>
+      const options = {
+        renderer: (content, { displayMode }) =>
+          katex.renderToString(content, { displayMode, throwOnError: false })
+      }
+      const text = markdownit()
+        .use(window.markdownitDollarmath, options)
+        .render("$a = 1$")
+      document.getElementById("demo").innerHTML = text
+    </script>
+  </body>
 </html>
 ```
 
@@ -115,12 +122,11 @@ This can be deployed by [GitHub Pages].
 [ci-link]: https://github.com/executablebooks/markdown-it--plugin-template/actions
 [npm-badge]: https://img.shields.io/npm/v/markdown-it-dollarmath.svg
 [npm-link]: https://www.npmjs.com/package/markdown-it-dollarmath
-
-[GitHub Actions]: https://docs.github.com/en/actions
-[GitHub Pages]: https://docs.github.com/en/pages
+[github actions]: https://docs.github.com/en/actions
+[github pages]: https://docs.github.com/en/pages
 [prettier]: https://prettier.io/
 [eslint]: https://eslint.org/
-[Jest]: https://facebook.github.io/jest/
-[Rollup]: https://rollupjs.org
+[jest]: https://facebook.github.io/jest/
+[rollup]: https://rollupjs.org
 [npm]: https://www.npmjs.com
 [unpkg]: https://unpkg.com/

@@ -3,6 +3,7 @@ import typescript from "rollup-plugin-typescript2"
 import { babel } from "@rollup/plugin-babel"
 import commonjs from "@rollup/plugin-commonjs"
 import { nodeResolve } from "@rollup/plugin-node-resolve"
+import json from "@rollup/plugin-json"
 
 import * as packageJson from "./package.json"
 
@@ -13,7 +14,8 @@ export default {
     commonjs(), // Convert CommonJS modules to ES6
     babel({ babelHelpers: "bundled" }), // transpile ES6/7 code
     nodeResolve(), // resolve third party modules in node_modules
-    terser() // minify generated bundle
+    terser(), // minify generated bundle
+    json()  // import json files as modules
   ],
   output: [
     {

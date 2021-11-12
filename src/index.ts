@@ -1,7 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type MarkdownIt from "markdown-it/lib"
+import { escapeHtml } from "markdown-it/lib/common/utils"
+import type Renderer from "markdown-it/lib/renderer"
 import type StateBlock from "markdown-it/lib/rules_block/state_block"
 import type StateInline from "markdown-it/lib/rules_inline/state_inline"
+
+export interface IRenderOptions {
+  displayMode: boolean
+}
 
 export interface IOptions {
   /** Parse inline math when there is space after/before the opening/closing `$`, e.g. `$ a $` */
@@ -15,20 +21,24 @@ export interface IOptions {
   /** function to normalize the label, by default replaces whitespace with `-` */
   labelNormalizer?: (label: string) => string
   /** The render function for math content */
-  renderer?: (content: string, options?: { [key: string]: any }) => string
-  /** Options to parse to the render function, for inline math */
-  optionsInline?: { [key: string]: any }
-  /** Options to parse to the render function, for block math */
-  optionsBlock?: { [key: string]: any }
+  renderer?: (content: string, options: IRenderOptions) => string
+  /** The render function for label content */
+  labelRenderer?: (label: string) => string
 }
 
-const OptionDefaults: IOptions = {
+const OptionDefaults: Required<IOptions> = {
   allow_space: true,
   allow_digits: true,
   double_inline: true,
   allow_labels: true,
-  labelNormalizer: (label: string) => {
+  labelNormalizer(label) {
     return label.replace(/[\s]+/g, "-")
+  },
+  renderer(content) {
+    return escapeHtml(content)
+  },
+  labelRenderer(label) {
+    return `<a href="#${label}" class="mathlabel" title="Permalink to this equation">¶</a>`
   }
 }
 
@@ -41,70 +51,50 @@ export default function dollarmath_plugin(md: MarkdownIt, options?: IOptions): v
   md.inline.ruler.before("escape", "math_inline", math_inline_dollar(fullOptions))
   md.block.ruler.before("fence", "math_block", math_block_dollar(fullOptions))
 
-  const renderer = fullOptions?.renderer
-
-  if (renderer) {
-    md.renderer.rules["math_inline"] = (tokens, idx) => {
-      const content = tokens[idx].content
+  const createRule =
+    (
+      opts: IRenderOptions & { inline?: boolean; hasLabel?: boolean }
+    ): Renderer.RenderRule =>
+    (tokens, idx) => {
+      const content = tokens[idx].content.trim()
       let res: string
       try {
-        res = renderer(content, fullOptions?.optionsInline)
+        res = fullOptions.renderer(content, { displayMode: opts.displayMode })
       } catch (err) {
-        res = md.utils.escapeHtml(`${content}:${err.message}`)
+        res = md.utils.escapeHtml(`${content}:${(err as Error).message}`)
       }
-      return res
-    }
-    md.renderer.rules["math_inline_double"] = (tokens, idx) => {
-      const content = tokens[idx].content
-      let res: string
-      try {
-        res = renderer(content, fullOptions?.optionsBlock)
-      } catch (err) {
-        res = md.utils.escapeHtml(`${content}:${err.message}`)
-      }
-      return res
-    }
-    md.renderer.rules["math_block"] = (tokens, idx) => {
-      const content = tokens[idx].content
-      let res: string
-      try {
-        res = renderer(content, fullOptions?.optionsBlock)
-      } catch (err) {
-        res = md.utils.escapeHtml(`${content}:${err.message}`)
-      }
-      return res
-    }
-    md.renderer.rules["math_block_label"] = (tokens, idx) => {
-      const content = tokens[idx].content
-      const label = tokens[idx].info
-      let res: string
-      try {
-        res = renderer(content, fullOptions?.optionsBlock)
-      } catch (err) {
-        res = md.utils.escapeHtml(`${content}:${err.message}`)
-      }
+      const className = opts.inline ? "inline" : "block"
+      const tag = opts.displayMode ? "div" : "span"
+      const newline = opts.inline ? "" : "\n"
+      const id = tokens[idx].info
+      const label = opts.hasLabel ? `${fullOptions.labelRenderer(id)}` : ""
       return (
-        res +
-        `\n<a href="#${label}" class="mathlabel" title="Permalink to this equation">¶</a>\n`
+        [
+          `<${tag} ${id ? `id="${id}" ` : ""}class="math ${className}">`,
+          label,
+          res,
+          `</${tag}>`
+        ]
+          .filter(v => !!v)
+          .join(newline) + newline
       )
     }
-  } else {
-    // basic renderers for testing
-    md.renderer.rules["math_inline"] = (tokens, idx) => {
-      return `<eq>${tokens[idx].content}</eq>`
-    }
-    md.renderer.rules["math_inline_double"] = (tokens, idx) => {
-      return `<eqn>${tokens[idx].content}</eqn>`
-    }
-    md.renderer.rules["math_block"] = (tokens, idx) => {
-      return `<section>\n<eqn>${tokens[idx].content}</eqn>\n</section>\n`
-    }
-    md.renderer.rules["math_block_label"] = (tokens, idx) => {
-      const content = tokens[idx].content
-      const label = tokens[idx].info
-      return `<section>\n<eqn>${content}</eqn>\n<span class="eqno">(${label})</span>\n</section>\n`
-    }
-  }
+
+  md.renderer.rules["math_inline"] = createRule({
+    displayMode: false,
+    inline: true
+  })
+  md.renderer.rules["math_inline_double"] = createRule({
+    displayMode: true,
+    inline: true
+  })
+  md.renderer.rules["math_block"] = createRule({
+    displayMode: true
+  })
+  md.renderer.rules["math_block_label"] = createRule({
+    displayMode: true,
+    hasLabel: true
+  })
 }
 
 /** Test if dollar is escaped */
@@ -150,7 +140,7 @@ function math_inline_dollar(
         - check if the previous character is a space (if not allow_space)
         - check if the next character is a digit (if not allow_digits)
     - Check empty content
-   * 
+   *
   */
   function math_inline_dollar_rule(state: StateInline, silent: boolean): boolean {
     if (state.src.charCodeAt(state.pos) !== 0x24 /* $ */) {
