@@ -46,7 +46,7 @@ const OptionDefaults: Required<IOptions> = {
  * A markdown-it plugin for parsing dollar delimited math,
  * e.g. inline: ``$a=1$``, block: ``$$b=2$$`
  */
-export default function dollarmath_plugin(md: MarkdownIt, options?: IOptions): void {
+export function dollarmathPlugin(md: MarkdownIt, options?: IOptions): void {
   const fullOptions = { ...OptionDefaults, ...options }
   md.inline.ruler.before("escape", "math_inline", math_inline_dollar(fullOptions))
   md.block.ruler.before("fence", "math_block", math_block_dollar(fullOptions))
@@ -96,6 +96,9 @@ export default function dollarmath_plugin(md: MarkdownIt, options?: IOptions): v
     hasLabel: true
   })
 }
+
+// Exporting both a default and named export is necessary for Jest in some cases
+export default dollarmathPlugin
 
 /** Test if dollar is escaped */
 function isEscaped(state: StateInline, back_pos: number, mod = 0): boolean {
