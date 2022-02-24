@@ -48,3 +48,22 @@ describe("Parses basic", () => {
     it(name, () => expect(rendered.trim()).toEqual(expected.trim()))
   })
 })
+
+describe("Ensure parsing to mdast", () => {
+  it("trims math content", () => {
+    const mdit = MarkdownIt("commonmark").use(dollarmathPlugin, {
+      allow_space: false,
+      allow_digits: false,
+      double_inline: true,
+      allow_labels: true,
+      renderer: (content, { displayMode }) =>
+        renderToString(content, { throwOnError: false, displayMode })
+    })
+    const tokens = mdit.parse("$$\na\n$$ (label)", {})
+    expect(tokens[0].tag).toEqual("math")
+    expect(tokens[0].content).toEqual("a")
+    expect(tokens[0].markup).toEqual("$$")
+    expect(tokens[0].info).toEqual("label")
+    expect(tokens[0].block).toEqual(true)
+  })
+})
