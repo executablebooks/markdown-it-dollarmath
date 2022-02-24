@@ -60,7 +60,6 @@ describe("Ensure parsing to mdast", () => {
         renderToString(content, { throwOnError: false, displayMode })
     })
     const tokens = mdit.parse("$$\na\n$$ (label)", {})
-    console.log(tokens)
     expect(tokens[0].tag).toEqual("math")
     expect(tokens[0].content).toEqual("a")
     expect(tokens[0].markup).toEqual("$$")
