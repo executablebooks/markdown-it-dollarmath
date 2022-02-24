@@ -331,7 +331,7 @@ function math_block_dollar(
 
     const token = state.push(label ? "math_block_label" : "math_block", "math", 0)
     token.block = true
-    token.content = state.src.slice(startPos + 2, end)
+    token.content = state.src.slice(startPos + 2, end).trim()
     token.markup = "$$"
     token.map = [startLine, state.line]
     if (label) {
