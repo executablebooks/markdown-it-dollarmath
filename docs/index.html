@@ -89,7 +89,7 @@ $$ (label)</textarea
             return katex.renderToString(content, { displayMode, throwOnError: false })
           }
         }
-        const md = markdownit().use(markdownitDollarmath, options)
+        const md = markdownit().use(markdownitDollarmath.dollarmathPlugin, options)
         renderer.innerHTML = md.render(inputText.value)
       }
       // trigger change handler for first render
