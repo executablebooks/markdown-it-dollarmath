@@ -303,14 +303,14 @@ function math_block_dollar(
         nextLine += 1
         start = state.bMarks[nextLine] + state.tShift[nextLine]
         end = state.eMarks[nextLine]
-        if (end - start < 2) {
-          continue
-        }
         lineText = state.src.slice(start, end)
         if (lineText.trim().endsWith("$$")) {
           haveEndMarker = true
           end = end - 2 - (lineText.length - lineText.trim().length)
           break
+        }
+        if (lineText.trim() == "") {
+          break // blank lines are not allowed within $$
         }
         if (options.allow_labels) {
           const output = matchLabel(lineText, end)
