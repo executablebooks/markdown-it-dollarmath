@@ -1,6 +1,6 @@
-/* eslint-disable jest/valid-title */
-import fs from "fs"
-import { renderToString } from "katex"
+import { describe, expect, it } from "vitest"
+import fs from "node:fs"
+import katex from "katex"
 import MarkdownIt from "markdown-it"
 import dollarmathPlugin from "../src"
 
@@ -39,7 +39,7 @@ describe("Parses basic", () => {
       double_inline: true,
       allow_labels: true,
       renderer: (content, { displayMode }) =>
-        renderToString(content, { throwOnError: false, displayMode })
+        katex.renderToString(content, { throwOnError: false, displayMode })
     })
     let rendered = mdit.render(text)
     // remove styles
@@ -57,7 +57,7 @@ describe("Ensure parsing to mdast", () => {
       double_inline: true,
       allow_labels: true,
       renderer: (content, { displayMode }) =>
-        renderToString(content, { throwOnError: false, displayMode })
+        katex.renderToString(content, { throwOnError: false, displayMode })
     })
     const tokens = mdit.parse("$$\na\n$$ (label)", {})
     expect(tokens[0].tag).toEqual("math")

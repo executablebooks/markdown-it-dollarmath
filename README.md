@@ -53,7 +53,7 @@ const text = mdit.render("$a = 1$")
 In the browser:
 
 ```html
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <title>Example Page</title>
@@ -88,7 +88,7 @@ In the browser:
 - TypeScript
 - Code Formatting ([prettier])
 - Code Linting ([eslint])
-- Testing and coverage ([jest])
+- Testing and coverage ([vitest])
 - Continuous Integration ([GitHub Actions])
 - Bundled as both UMD and ESM ([rollup])
 - Upload as [NPM] package and [unpkg] CDN
@@ -126,7 +126,7 @@ This can be deployed by [GitHub Pages].
 [github pages]: https://docs.github.com/en/pages
 [prettier]: https://prettier.io/
 [eslint]: https://eslint.org/
-[jest]: https://facebook.github.io/jest/
+[vitest]: https://vitest.dev/
 [rollup]: https://rollupjs.org
 [npm]: https://www.npmjs.com
 [unpkg]: https://unpkg.com/

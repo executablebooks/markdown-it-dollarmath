@@ -2,11 +2,12 @@
   "compilerOptions": {
     "target": "es6",
     // module is overridden from the build:esm/build:cjs scripts
-    "module": "es2015",
+    "module": "ESNext",
     "esModuleInterop": true,
     "noImplicitAny": true,
     "strict": true,
-    "moduleResolution": "node",
+    "moduleResolution": "node16",
+    "declaration": true,
     "sourceMap": true,
     // outDir is overridden from the build:esm/build:cjs scripts
     "outDir": "dist/types",

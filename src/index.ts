@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type MarkdownIt from "markdown-it/lib"
-import { escapeHtml } from "markdown-it/lib/common/utils"
-import type Renderer from "markdown-it/lib/renderer"
-import type StateBlock from "markdown-it/lib/rules_block/state_block"
-import type StateInline from "markdown-it/lib/rules_inline/state_inline"
+import type MarkdownIt from "markdown-it/lib/index.js"
+import { escapeHtml } from "markdown-it/lib/common/utils.js"
+import type Renderer from "markdown-it/lib/renderer.js"
+import type StateBlock from "markdown-it/lib/rules_block/state_block.js"
+import type StateInline from "markdown-it/lib/rules_inline/state_inline.js"
 
 export interface IRenderOptions {
   displayMode: boolean
